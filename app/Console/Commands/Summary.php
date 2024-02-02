@@ -74,13 +74,13 @@ class Summary extends Command
         $dataSummary = SummaryModel::whereDate('tanggal', date('Y-m-d'))->whereTime('tanggal', '=', date('H').':00:00')->select('status', 'total')->get();
         if ($dataSummary->count() > 0) {
             $data = array(
-                'telegram_user_id'  => '602752160',
+                'telegram_user_id'  => env('TELEGRAM_USER_ID'),
                 'tanggal'           => date('Y-m-d H').':00:00',
                 'total'             => $dataSummary->sum('total'),
                 'total_active'      => $dataSummary->where('status', true)->first()->total,
                 'total_nonactive'   => $dataSummary->where('status', false)->first()->total
             );
-            Notification::route('telegram', '602752160')->notify(new SummaryTelegram($data));
+            Notification::route('telegram', env('TELEGRAM_USER_ID'))->notify(new SummaryTelegram($data));
         }
 
         Log::info("=== END SCHEDULER SUMMARY REPORT ===");
